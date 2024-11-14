@@ -1,0 +1,17 @@
+---
+- name: Uninstall Apache2 or HTTPD
+  hosts: all
+  become: true
+  tasks:
+    - name: Uninstall apache2 (Debian/Ubuntu)
+      package:
+        name: apache2
+        state: absent
+      when: ansible_facts['distribution'] in ['Debian', 'Ubuntu']
+
+    - name: Uninstall httpd (CentOS/RHEL)
+      package:
+        name: httpd
+        state: absent
+      when: ansible_facts['distribution'] in ['CentOS', 'RedHat', 'Fedora']
+

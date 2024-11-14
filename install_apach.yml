@@ -1,0 +1,41 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: update repository index
+    ansible.builtin.apt:
+      update_cache: yes
+    when: ansible_facts['distribution'] in ['Debian', 'Ubuntu']
+
+  - name: update repository index
+    ansible.builtin.dnf:
+      update_cache: yes
+    when: ansible_facts['distribution'] in ['CentOS', 'RedHat', 'Fedora']
+
+  - name: Install apache2 package, big dawg!
+    ansible.builtin.apt:
+      name: apache2
+      state: present
+    when: ansible_facts['distribution'] in ['Debian', 'Ubuntu']
+
+  - name: Install httpd package on redhat, Champ!
+    ansible.builtin.dnf:
+      name: httpd
+      state: present
+    when: ansible_facts['distribution'] in ['CentOS', 'RedHat', 'Fedora']
+
+  - name: Start and enable the httpd service, Doodles
+    ansible.builtin.service:
+      name: httpd
+      state: started
+      enabled: true
+    when: ansible_facts['distribution'] in ['RedHat']
+
+  - name: Start and enable the apache2, Young Cannon
+    ansible.builtin.service:
+      name: apache
+      state: started
+      enabled: true
+    when: ansible_facts['distribution'] in ['CentOS']
