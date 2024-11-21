@@ -2,9 +2,26 @@
 
 - hosts: all
   become: true
+  pre_tasks:
+
+  - name: install updates (CentOS)
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "RedHat"
+
+
+  - name: install updates (Ubuntu)
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: web_server
+  become: true
   tasks:
 
-  - name: Install apache2 and php package, big dawg!
+  - name: Install apache2 and php package on Ubuntu, big dawg!
     package:
       name: 
         - apache2
@@ -13,7 +30,7 @@
       update_cache: yes
     when: ansible_facts['distribution'] in ['Debian', 'Ubuntu']
 
-  - name: Install httpd package on redhat, Champ!
+  - name: Install httpd package on RedHat, Champ!
     package:
       name: 
         - httpd
@@ -28,6 +45,20 @@
       state: started
       enabled: true
     when: ansible_facts['distribution'] in ['RedHat']
+
+- hosts: db_server
+  become: true
+  tasks:
+
+  - name: Install apache2 and php package on Ubuntu, big dawg!
+    package:
+      name:
+	- apache2
+        - libapache2-mod-php
+      state: present
+      update_cache: yes
+    when: ansible_facts['distribution'] in ['Debian', 'Ubuntu']
+
 
 #  - name: Start and enable the apache2, Young Cannon
 #    ansible.builtin.service:

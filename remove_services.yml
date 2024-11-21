@@ -1,0 +1,75 @@
+---
+- name: Stop and remove services without deleting files
+  hosts: all
+  become: yes
+  tasks:
+    - name: Stop the httpd service
+      ansible.builtin.systemd:
+        name: httpd
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+
+    - name: Stop the apache2 service
+      ansible.builtin.systemd:
+        name: apache2
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+
+    - name: Remove httpd service without deleting files
+      ansible.builtin.yum:
+        name: httpd
+        state: removed
+      ignore_errors: yes
+
+    - name: Remove apache2 service without deleting files
+      ansible.builtin.apt:
+        name: apache2
+        state: absent
+      ignore_errors: yes
+
+    - name: Stop and remove mariadb service without deleting files
+      ansible.builtin.systemd:
+        name: mariadb
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+
+    - name: Remove mariadb service without deleting files
+      ansible.builtin.yum:
+        name: mariadb-server
+        state: removed
+      ignore_errors: yes
+
+    - name: Stop and remove samba service without deleting files
+      ansible.builtin.systemd:
+        name: samba
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+
+    - name: Remove samba service without deleting files
+      ansible.builtin.yum:
+        name: samba
+        state: removed
+      ignore_errors: yes
+
+    - name: Remove libapache2-mod-php without deleting files
+      ansible.builtin.apt:
+        name: libapache2-mod-php
+        state: absent
+      ignore_errors: yes
+
+    - name: Stop nethack service if running
+      ansible.builtin.systemd:
+        name: nethack
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+
+    - name: Remove nethack service without deleting files
+      ansible.builtin.yum:
+        name: nethack
+        state: removed
+      ignore_errors: yes

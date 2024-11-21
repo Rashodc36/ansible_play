@@ -1,0 +1,92 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates (CentOS)
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "RedHat"
+
+
+  - name: install updates (Ubuntu)
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: web_server
+  become: true
+  tasks:
+
+  - name: Install httpd package on RedHat, Champ!
+    package:
+      name: 
+        - httpd
+        - nethack
+      state: present
+      update_cache: yes
+    when: ansible_facts['distribution'] in ['CentOS', 'RedHat', 'Fedora']
+
+  - name: Start and enable the httpd service, Doodles
+    service:
+      name: httpd
+      state: started
+      enabled: true
+    when: ansible_facts['distribution'] in ['RedHat']
+
+- hosts: db_server
+  become: true
+  tasks:
+
+  - name: Install apache2 and php package on Ubuntu, big dawg!
+    package:
+      name:
+        - apache2
+        - libapache2-mod-php
+      state: present
+      update_cache: yes
+    when: ansible_facts['distribution'] in ['Debian', 'Ubuntu']
+
+
+  - name: Start and enable the Ubuntu service, Doodles
+    service:
+      name: apache2
+      state: started
+      enabled: true
+    when: ansible_facts['distribution'] in ['Ubuntu']
+
+
+- hosts: file_server
+  become: true
+  tasks:
+ 
+  - name: install samba package
+    package:
+      name: samba
+      state: latest
+    when: ansible_facts['distribution'] in ['RedHat']
+
+  - name: Start and enable the samba service, Doodles
+    service:
+      name: 
+        name: httpd
+        state: started
+      enabled: true
+    when: ansible_facts['distribution'] in ['RedHat']
+
+  - name: Start and enable the samba service, Doodles
+    service:
+      name:
+	name: samba        state: latest
+        enabled: true
+    when: ansible_facts['distribution'] in ['RedHat']
+
+#  - name: Start and enable the apache2, Young Cannon
+#    ansible.builtin.service:
+#      name: apache
+#      state: started
+#      enabled: true
+#    when: ansible_facts['distribution'] in ['CentOS']

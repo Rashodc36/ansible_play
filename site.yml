@@ -1,0 +1,102 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates (CentOS)
+    tags: always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "RedHat"
+
+
+  - name: install updates (Ubuntu)
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: web_server
+  become: true
+  tasks:
+
+  - name: Install httpd package on RedHat, Champ!
+    tags: CentOS,RedHat,httpd,nethack
+    package:
+      name: 
+        - httpd
+        - nethack
+      state: present
+      update_cache: yes
+    when: ansible_facts['distribution'] in ['CentOS', 'RedHat', 'Fedora']
+
+  - name: Start and enable the httpd service, Doodles
+    tags: httpd,RedHat,CentOS
+    service:
+      name: httpd
+      state: started
+      enabled: true
+    when: ansible_facts['distribution'] in ['RedHat']
+
+- hosts: db_server
+  become: true
+  tasks:
+
+  - name: Install apache2 and php package on Ubuntu, big dawg!
+    tags: apache2,libapache2-mod-php
+    package:
+      name:
+        - apache2
+        - libapache2-mod-php
+      state: present
+      update_cache: yes
+    when: ansible_facts['distribution'] in ['Debian', 'Ubuntu']
+
+
+  - name: Start and enable the Ubuntu service, Doodles!
+    tags: apache2,Ubuntu
+    service:
+      name: apache2
+      state: started
+      enabled: true
+    when: ansible_facts['distribution'] in ['Ubuntu']
+
+
+- hosts: file_server
+  become: true
+  tasks:
+ 
+  - name: install httpd and samba package!
+    tags: httpd,samba,httpd,CentOS
+    package:
+      name: 
+        - httpd
+        - samba
+      state: latest
+    when: ansible_facts['distribution'] in ['RedHat']
+
+  - name: Start and enable the samba service, Doodles
+    tags: httpd,RedHat,CentOS
+    service:
+      name: httpd
+      state: started
+      enabled: true
+    when: ansible_facts['distribution'] in ['RedHat']
+
+  - name: Start and enable the samba service, Doodles!
+    tags: smb,RedHat,CentOS
+    service:
+      name: smb
+      state: started
+      enabled: true
+    when: ansible_facts['distribution'] in ['RedHat']
+
+#  - name: Start and enable the apache2, Young Cannon
+#    ansible.builtin.service:
+#      name: apache
+#      state: started
+#      enabled: true
+#    when: ansible_facts['distribution'] in ['CentOS']
