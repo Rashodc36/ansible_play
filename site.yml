@@ -147,10 +147,3 @@
       state: started
       enabled: true
     when: ansible_facts['distribution'] in ['RedHat']
-
-#  - name: Start and enable the apache2, Young Cannon
-#    ansible.builtin.service:
-#      name: apache
-#      state: started
-#      enabled: true
-#    when: ansible_facts['distribution'] in ['CentOS']
