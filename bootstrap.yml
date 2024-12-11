@@ -1,0 +1,50 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates (CentOS)
+    tags: always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "RedHat"
+
+
+  - name: install updates (Ubuntu)
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: create doodles user
+    tags: always
+    user:
+      name: doodles
+      group: root
+      home: /home/doodles
+      shell: /bin/bash
+      create_home: yes
+      state: present
+
+  - name: add ssh key for doodles
+    tags: always
+    authorized_key:
+      user: doodles
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMz/4lzPbuif+mvT+6wpnxuN6q4NVkDSawoPpUOAtcOx ansiblekey"
+
+  - name: add sudoers file for doodles
+    tags: always
+    copy:
+      src: sudoer_doodles
+      dest: /etc/sudoers.d/doodles
+      owner: root
+      group: root 
+      mode: 0440
+

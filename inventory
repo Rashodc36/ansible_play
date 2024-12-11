@@ -7,5 +7,5 @@
 [db_server]
 10.109.31.234
 
-[file_server]
+[workstation]
 10.109.20.204

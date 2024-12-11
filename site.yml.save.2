@@ -19,49 +19,6 @@
       update_cache: yes
     when: ansible_distribution == "Ubuntu"
 
-- hosts: all
-  become: true
-  tasks:
-
-  - name: add ssh key for doodles
-    tags: always
-    authorized_key:
-      user: doodles
-      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMz/4lzPbuif+mvT+6wpnxuN6q4NVkDSawoPpUOAtcOx ansiblekey"
-
-- hosts: workstation
-  become: true
-  tasks:
-
-  - name: install unzip
-    package:
-     name: unzip
-
-  - name: install terraform
-    unarchive:
-      src: https://releases.hashicorp.com/terraform/1.6.1/terraform_1.6.1_linux_amd64.zip
-      dest: /usr/local/bin
-      remote_src: yes
-      mode: 0755
-      owner: root
-      group: root
-
-  - name: Install httpd package on RedHat, Champ!
-    tags: CentOS,RedHat,httpd,nethack
-    package:
-      name:
-        - httpd
-        - nethack
-      state: present
-      update_cache: yes
-    when: ansible_facts['distribution'] in ['CentOS', 'RedHat', 'Fedora']
-
-  - name: Start and enable the httpd service, Doodles
-    tags: httpd,RedHat,CentOS
-    service:
-      name: httpd
-      state: started
-      enabled: true
 
 
 - hosts: web_server
