@@ -1,0 +1,5 @@
+- name: add ssh key for doodles
+  authorized_key:
+    user: doodles
+    key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMz/4lzPbuif+mvT+6wpnxuN6q4NVkDSawoPpUOAtcOx ansiblekey"
+

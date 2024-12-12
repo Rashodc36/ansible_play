@@ -1,0 +1,25 @@
+- name: install httpd and samba package!
+  tags: httpd,samba,httpd,CentOS
+  package:
+    name: 
+      - httpd
+      - samba 
+    state: latest
+  when: ansible_facts['distribution'] in ['RedHat']
+
+- name: Start and enable the samba service, Doodles
+  tags: httpd,RedHat,CentOS
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+  when: ansible_facts['distribution'] in ['RedHat']
+
+- name: Start and enable the samba service, Doodles!
+  tags: smb,RedHat,CentOS
+  service:
+    name: smb
+    state: started
+    enabled: true
+  when: ansible_facts['distribution'] in ['RedHat']
+

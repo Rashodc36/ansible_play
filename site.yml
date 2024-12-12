@@ -4,7 +4,7 @@
   become: true
   pre_tasks:
 
-  - name: install updates (CentOS)
+  - name: update repository index (CentOS)
     tags: always
     dnf:
       update_only: yes
@@ -12,7 +12,7 @@
     when: ansible_distribution == "RedHat"
 
 
-  - name: install updates (Ubuntu)
+  - name: Update reposito updates (Ubuntu)
     tags: always
     apt:
       upgrade: dist
@@ -21,129 +21,25 @@
 
 - hosts: all
   become: true
-  tasks:
-
-  - name: add ssh key for doodles
-    tags: always
-    authorized_key:
-      user: doodles
-      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMz/4lzPbuif+mvT+6wpnxuN6q4NVkDSawoPpUOAtcOx ansiblekey"
+  roles:
+    - base
 
 - hosts: workstation
   become: true
-  tasks:
-
-  - name: install unzip
-    package:
-     name: unzip
-
-  - name: install terraform
-    unarchive:
-      src: https://releases.hashicorp.com/terraform/1.6.1/terraform_1.6.1_linux_amd64.zip
-      dest: /usr/local/bin
-      remote_src: yes
-      mode: 0755
-      owner: root
-      group: root
-
-  - name: Install httpd package on RedHat, Champ!
-    tags: CentOS,RedHat,httpd,nethack
-    package:
-      name:
-        - httpd
-        - nethack
-      state: present
-      update_cache: yes
-    when: ansible_facts['distribution'] in ['CentOS', 'RedHat', 'Fedora']
-
-  - name: Start and enable the httpd service, Doodles
-    tags: httpd,RedHat,CentOS
-    service:
-      name: httpd
-      state: started
-      enabled: true
-
+  roles:
+    - workstation
 
 - hosts: web_server
   become: true
-  tasks:
-
-  - name: Install httpd package on RedHat, Champ!
-    tags: CentOS,RedHat,httpd,nethack
-    package:
-      name: 
-        - httpd
-        - nethack
-      state: present
-      update_cache: yes
-    when: ansible_facts['distribution'] in ['CentOS', 'RedHat', 'Fedora']
-
-  - name: Start and enable the httpd service, Doodles
-    tags: httpd,RedHat,CentOS
-    service:
-      name: httpd
-      state: started
-      enabled: true
-    when: ansible_facts['distribution'] in ['RedHat']
-
-  - name: copy default html file for site
-    tags: apache,httpd,apache2
-    copy:
-      src: default_site.html
-      dest: /var/www/html/index.html
-      owner: root
-      group: root
-      mode: 0644
+  roles:
+    - web_server
 
 - hosts: db_server
   become: true
-  tasks:
-
-  - name: Install apache2 and php package on Ubuntu, big dawg!
-    tags: apache2,libapache2-mod-php
-    package:
-      name:
-        - apache2
-        - libapache2-mod-php
-      state: present
-      update_cache: yes
-    when: ansible_facts['distribution'] in ['Debian', 'Ubuntu']
-
-
-  - name: Start and enable the Ubuntu service, Doodles!
-    tags: apache2,Ubuntu
-    service:
-      name: apache2
-      state: started
-      enabled: true
-    when: ansible_facts['distribution'] in ['Ubuntu']
-
+  roles:
+    - db_server
 
 - hosts: file_server
   become: true
-  tasks:
- 
-  - name: install httpd and samba package!
-    tags: httpd,samba,httpd,CentOS
-    package:
-      name: 
-        - httpd
-        - samba
-      state: latest
-    when: ansible_facts['distribution'] in ['RedHat']
-
-  - name: Start and enable the samba service, Doodles
-    tags: httpd,RedHat,CentOS
-    service:
-      name: httpd
-      state: started
-      enabled: true
-    when: ansible_facts['distribution'] in ['RedHat']
-
-  - name: Start and enable the samba service, Doodles!
-    tags: smb,RedHat,CentOS
-    service:
-      name: smb
-      state: started
-      enabled: true
-    when: ansible_facts['distribution'] in ['RedHat']
+  roles:
+    - file_server
